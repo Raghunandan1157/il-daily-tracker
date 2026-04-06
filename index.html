@@ -5,322 +5,413 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IL Dashboard - Daily Tracker</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <header>
-    <div class="header-content">
-      <h1>IL Daily Tracker</h1>
-      <p class="subtitle">Collection & Sourcing Dashboard</p>
-    </div>
-    <div class="header-actions">
-      <input type="date" id="entryDate" />
-      <button class="btn btn-outline" id="viewHistoryBtn">View History</button>
-    </div>
-  </header>
 
-  <main>
-    <!-- Tab Navigation -->
-    <nav class="tabs">
-      <button class="tab active" data-tab="collection">Collection</button>
-      <button class="tab" data-tab="sourcing">Sourcing</button>
-      <button class="tab" data-tab="team">Team</button>
-      <button class="tab" data-tab="history">History</button>
-    </nav>
-
-    <!-- Collection Tab -->
-    <section id="collection" class="tab-content active">
-      <div class="section-header">
-        <h2>Collection Tracker</h2>
-        <span class="badge">Daily Entry</span>
+  <!-- ===== LOGIN SCREEN ===== -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-container">
+      <div class="login-brand">
+        <div class="login-logo">IL</div>
+        <h1>IL Daily Tracker</h1>
+        <p>Collection & Sourcing Dashboard</p>
       </div>
 
-      <div class="cards-grid">
-        <!-- FTD Demand -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon ftd">F</div>
-            <div>
-              <h3>FTD - Demand</h3>
-              <p class="card-desc">First Time Demand amount</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <label for="ftdDemand">Amount (&#8377;)</label>
-            <input type="number" id="ftdDemand" placeholder="Enter demand amount" min="0" step="0.01" />
-          </div>
-        </div>
-
-        <!-- FTD Collection -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon ftd">F</div>
-            <div>
-              <h3>FTD - Collection</h3>
-              <p class="card-desc">First Time Demand collection</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <label for="ftdCollection">Amount (&#8377;)</label>
-            <input type="number" id="ftdCollection" placeholder="Enter collection amount" min="0" step="0.01" />
-          </div>
-        </div>
-
-        <!-- FTOD -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon ftod">FO</div>
-            <div>
-              <h3>FTOD</h3>
-              <p class="card-desc">First Time Overdue collection</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <label for="ftod">Amount (&#8377;)</label>
-            <input type="number" id="ftod" placeholder="Enter FTOD amount" min="0" step="0.01" />
-          </div>
-        </div>
-
-        <!-- Potential PNPA -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon pnpa">P</div>
-            <div>
-              <h3>Potential PNPA</h3>
-              <p class="card-desc">Pending Collection &middot; 31-60 Days (SMA-1)</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <label for="potentialPnpa">Amount (&#8377;)</label>
-            <input type="number" id="potentialPnpa" placeholder="Enter SMA-1 amount" min="0" step="0.01" />
-          </div>
-        </div>
-
-        <!-- Pre-PNPA -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon prepnpa">PP</div>
-            <div>
-              <h3>Pre-PNPA</h3>
-              <p class="card-desc">Pending Collection &middot; 61-90 Days (SMA-2)</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <label for="prePnpa">Amount (&#8377;)</label>
-            <input type="number" id="prePnpa" placeholder="Enter SMA-2 amount" min="0" step="0.01" />
-          </div>
-        </div>
-
-        <!-- NPA -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon npa">N</div>
-            <div>
-              <h3>NPA</h3>
-              <p class="card-desc">Non-Performing Asset</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <label for="npa">Amount (&#8377;)</label>
-            <input type="number" id="npa" placeholder="Enter NPA amount" min="0" step="0.01" />
-          </div>
+      <div class="login-roles">
+        <h2>Sign in as</h2>
+        <div class="role-buttons">
+          <button class="role-btn role-collection" data-role="collection" onclick="selectRole('collection')">
+            <div class="role-icon">C</div>
+            <span>Collector</span>
+            <small>Collection data entry</small>
+          </button>
+          <button class="role-btn role-source" data-role="source" onclick="selectRole('source')">
+            <div class="role-icon">S</div>
+            <span>Source</span>
+            <small>Sourcing data entry</small>
+          </button>
+          <button class="role-btn role-admin" data-role="admin" onclick="selectRole('admin')">
+            <div class="role-icon">A</div>
+            <span>Admin</span>
+            <small>Full dashboard access</small>
+          </button>
         </div>
       </div>
 
-      <div class="form-actions">
-        <button class="btn btn-primary" id="saveCollection">Save Collection Data</button>
-        <button class="btn btn-outline" id="clearCollection">Clear</button>
-      </div>
-    </section>
-
-    <!-- Sourcing Tab -->
-    <section id="sourcing" class="tab-content">
-      <div class="section-header">
-        <h2>Sourcing Tracker</h2>
-        <span class="badge badge-green">Daily Entry</span>
-      </div>
-
-      <div class="cards-grid">
-        <!-- No. of Branches -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon branch">B</div>
-            <div>
-              <h3>Branches Handling</h3>
-              <p class="card-desc">No. of branches handling today</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <label for="branches">Count</label>
-            <input type="number" id="branches" placeholder="Enter number of branches" min="0" />
-          </div>
+      <div class="login-password" id="loginPassword" style="display:none">
+        <div class="login-back" onclick="backToRoles()">&larr; Back</div>
+        <div class="login-role-label" id="loginRoleLabel"></div>
+        <div class="password-field">
+          <label for="passwordInput">Enter Password</label>
+          <input type="password" id="passwordInput" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()" />
+          <p class="login-error" id="loginError"></p>
         </div>
-
-        <!-- Active Staff -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon staff">S</div>
-            <div>
-              <h3>Active Staff</h3>
-              <p class="card-desc">No. of active staff for the day</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <label for="activeStaff">Count</label>
-            <input type="number" id="activeStaff" placeholder="Enter active staff count" min="0" />
-          </div>
-        </div>
-
-        <!-- Login Plan -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon login">L</div>
-            <div>
-              <h3>Login Plan</h3>
-              <p class="card-desc">Login plan for the day</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <label for="loginPlan">Count / Target</label>
-            <input type="number" id="loginPlan" placeholder="Enter login plan" min="0" />
-          </div>
-        </div>
-
-        <!-- DB Plan -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon db">D</div>
-            <div>
-              <h3>DB Plan</h3>
-              <p class="card-desc">Disbursement plan for the day</p>
-            </div>
-          </div>
-          <div class="card-body">
-            <label for="dbPlan">Amount (&#8377;)</label>
-            <input type="number" id="dbPlan" placeholder="Enter DB plan amount" min="0" step="0.01" />
-          </div>
-        </div>
+        <button class="btn btn-primary btn-full" onclick="doLogin()">Sign In</button>
       </div>
 
-      <div class="form-actions">
-        <button class="btn btn-primary" id="saveSourcing">Save Sourcing Data</button>
-        <button class="btn btn-outline" id="clearSourcing">Clear</button>
-      </div>
-    </section>
-
-    <!-- Team Tab -->
-    <section id="team" class="tab-content">
-      <div class="section-header">
-        <h2>Team Management</h2>
-        <span class="badge badge-purple">Assign & Track</span>
-      </div>
-
-      <div class="team-form">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-icon team-icon">+</div>
-            <div>
-              <h3>Add Team Member</h3>
-              <p class="card-desc">Assign members to tasks</p>
-            </div>
-          </div>
-          <div class="card-body team-inputs">
-            <div class="input-group">
-              <label for="memberName">Name</label>
-              <input type="text" id="memberName" placeholder="Member name" />
-            </div>
-            <div class="input-group">
-              <label for="memberRole">Role</label>
-              <select id="memberRole">
-                <option value="">Select role</option>
-                <option value="Collection Officer">Collection Officer</option>
-                <option value="Sourcing Officer">Sourcing Officer</option>
-                <option value="Branch Manager">Branch Manager</option>
-                <option value="Team Lead">Team Lead</option>
-                <option value="Field Executive">Field Executive</option>
-              </select>
-            </div>
-            <div class="input-group">
-              <label for="memberTask">Assigned Task</label>
-              <select id="memberTask">
-                <option value="">Select task</option>
-                <option value="FTD Collection">FTD Collection</option>
-                <option value="FTOD Collection">FTOD Collection</option>
-                <option value="Pending Collection (SMA-1)">Pending Collection (SMA-1)</option>
-                <option value="Pending Collection (SMA-2)">Pending Collection (SMA-2)</option>
-                <option value="NPA Recovery">NPA Recovery</option>
-                <option value="Sourcing - Login">Sourcing - Login</option>
-                <option value="Sourcing - Disbursement">Sourcing - Disbursement</option>
-              </select>
-            </div>
-            <button class="btn btn-primary" id="addMember">Add Member</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="team-list" id="teamList">
-        <!-- Populated by JS -->
-      </div>
-    </section>
-
-    <!-- History Tab -->
-    <section id="history" class="tab-content">
-      <div class="section-header">
-        <h2>Entry History</h2>
-        <span class="badge badge-amber">Records</span>
-      </div>
-
-      <div class="history-filters">
-        <input type="date" id="historyFrom" />
-        <span>to</span>
-        <input type="date" id="historyTo" />
-        <button class="btn btn-primary" id="filterHistory">Filter</button>
-        <button class="btn btn-outline" id="exportCsv">Export CSV</button>
-      </div>
-
-      <div class="history-table-wrap">
-        <table class="history-table" id="historyTable">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>FTD Demand</th>
-              <th>FTD Coll.</th>
-              <th>FTOD</th>
-              <th>PNPA (SMA-1)</th>
-              <th>Pre-PNPA (SMA-2)</th>
-              <th>NPA</th>
-              <th>Branches</th>
-              <th>Staff</th>
-              <th>Login Plan</th>
-              <th>DB Plan</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="historyBody">
-          </tbody>
-        </table>
-        <p class="empty-state" id="emptyHistory">No entries yet. Start by adding data in Collection or Sourcing tabs.</p>
-      </div>
-    </section>
-  </main>
-
-  <!-- Toast -->
-  <div class="toast" id="toast"></div>
-
-  <!-- Delete Confirm Modal -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <h3>Confirm Delete</h3>
-      <p>Are you sure you want to delete this entry? This action cannot be undone.</p>
-      <div class="modal-actions">
-        <button class="btn btn-outline" id="cancelDelete">Cancel</button>
-        <button class="btn btn-danger" id="confirmDelete">Delete</button>
-      </div>
+      <p class="login-footer">Data stored locally in your browser</p>
     </div>
   </div>
 
-  <footer>
-    <p>&copy; 2026 IL Daily Tracker. All data stored locally in your browser.</p>
-  </footer>
+  <!-- ===== APP (hidden until login) ===== -->
+  <div id="appContainer" style="display:none">
+
+    <header>
+      <div class="header-content">
+        <h1>IL Daily Tracker</h1>
+        <p class="subtitle" id="headerSubtitle">Collection & Sourcing Dashboard</p>
+      </div>
+      <div class="header-actions">
+        <span class="user-badge" id="userBadge"></span>
+        <input type="date" id="entryDate" />
+        <button class="btn btn-outline" id="viewHistoryBtn">View History</button>
+        <button class="btn btn-outline" id="logoutBtn" onclick="doLogout()">Logout</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Tab Navigation -->
+      <nav class="tabs" id="tabNav">
+        <button class="tab active" data-tab="collection">Collection</button>
+        <button class="tab" data-tab="sourcing">Sourcing</button>
+        <button class="tab" data-tab="team">Team</button>
+        <button class="tab" data-tab="history">History</button>
+        <button class="tab" data-tab="admin">Dashboard</button>
+      </nav>
+
+      <!-- Collection Tab -->
+      <section id="collection" class="tab-content active">
+        <div class="section-header">
+          <h2>Collection Tracker</h2>
+          <span class="badge">Daily Entry</span>
+        </div>
+
+        <div class="cards-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon ftd">F</div>
+              <div><h3>FTD - Demand</h3><p class="card-desc">First Time Demand amount</p></div>
+            </div>
+            <div class="card-body">
+              <label for="ftdDemand">Amount (&#8377;)</label>
+              <input type="number" id="ftdDemand" placeholder="Enter demand amount" min="0" step="0.01" />
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon ftd">F</div>
+              <div><h3>FTD - Collection</h3><p class="card-desc">First Time Demand collection</p></div>
+            </div>
+            <div class="card-body">
+              <label for="ftdCollection">Amount (&#8377;)</label>
+              <input type="number" id="ftdCollection" placeholder="Enter collection amount" min="0" step="0.01" />
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon ftod">FO</div>
+              <div><h3>FTOD</h3><p class="card-desc">First Time Overdue collection</p></div>
+            </div>
+            <div class="card-body">
+              <label for="ftod">Amount (&#8377;)</label>
+              <input type="number" id="ftod" placeholder="Enter FTOD amount" min="0" step="0.01" />
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon pnpa">P</div>
+              <div><h3>Potential PNPA</h3><p class="card-desc">Pending Collection &middot; 31-60 Days (SMA-1)</p></div>
+            </div>
+            <div class="card-body">
+              <label for="potentialPnpa">Amount (&#8377;)</label>
+              <input type="number" id="potentialPnpa" placeholder="Enter SMA-1 amount" min="0" step="0.01" />
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon prepnpa">PP</div>
+              <div><h3>Pre-PNPA</h3><p class="card-desc">Pending Collection &middot; 61-90 Days (SMA-2)</p></div>
+            </div>
+            <div class="card-body">
+              <label for="prePnpa">Amount (&#8377;)</label>
+              <input type="number" id="prePnpa" placeholder="Enter SMA-2 amount" min="0" step="0.01" />
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon npa">N</div>
+              <div><h3>NPA</h3><p class="card-desc">Non-Performing Asset</p></div>
+            </div>
+            <div class="card-body">
+              <label for="npa">Amount (&#8377;)</label>
+              <input type="number" id="npa" placeholder="Enter NPA amount" min="0" step="0.01" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" id="saveCollection">Save Collection Data</button>
+          <button class="btn btn-outline" id="clearCollection">Clear</button>
+        </div>
+      </section>
+
+      <!-- Sourcing Tab -->
+      <section id="sourcing" class="tab-content">
+        <div class="section-header">
+          <h2>Sourcing Tracker</h2>
+          <span class="badge badge-green">Daily Entry</span>
+        </div>
+
+        <div class="cards-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon branch">B</div>
+              <div><h3>Branches Handling</h3><p class="card-desc">No. of branches handling today</p></div>
+            </div>
+            <div class="card-body">
+              <label for="branches">Count</label>
+              <input type="number" id="branches" placeholder="Enter number of branches" min="0" />
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon staff">S</div>
+              <div><h3>Active Staff</h3><p class="card-desc">No. of active staff for the day</p></div>
+            </div>
+            <div class="card-body">
+              <label for="activeStaff">Count</label>
+              <input type="number" id="activeStaff" placeholder="Enter active staff count" min="0" />
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon login">L</div>
+              <div><h3>Login Plan</h3><p class="card-desc">Login plan for the day</p></div>
+            </div>
+            <div class="card-body">
+              <label for="loginPlan">Count / Target</label>
+              <input type="number" id="loginPlan" placeholder="Enter login plan" min="0" />
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon db">D</div>
+              <div><h3>DB Plan</h3><p class="card-desc">Disbursement plan for the day</p></div>
+            </div>
+            <div class="card-body">
+              <label for="dbPlan">Amount (&#8377;)</label>
+              <input type="number" id="dbPlan" placeholder="Enter DB plan amount" min="0" step="0.01" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" id="saveSourcing">Save Sourcing Data</button>
+          <button class="btn btn-outline" id="clearSourcing">Clear</button>
+        </div>
+      </section>
+
+      <!-- Team Tab -->
+      <section id="team" class="tab-content">
+        <div class="section-header">
+          <h2>Team Management</h2>
+          <span class="badge badge-purple">Assign & Track</span>
+        </div>
+
+        <div class="team-form">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon team-icon">+</div>
+              <div><h3>Add Team Member</h3><p class="card-desc">Assign members to tasks</p></div>
+            </div>
+            <div class="card-body team-inputs">
+              <div class="input-group">
+                <label for="memberName">Name</label>
+                <input type="text" id="memberName" placeholder="Member name" />
+              </div>
+              <div class="input-group">
+                <label for="memberRole">Role</label>
+                <select id="memberRole">
+                  <option value="">Select role</option>
+                  <option value="Collection Officer">Collection Officer</option>
+                  <option value="Sourcing Officer">Sourcing Officer</option>
+                  <option value="Branch Manager">Branch Manager</option>
+                  <option value="Team Lead">Team Lead</option>
+                  <option value="Field Executive">Field Executive</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="memberTask">Assigned Task</label>
+                <select id="memberTask">
+                  <option value="">Select task</option>
+                  <option value="FTD Collection">FTD Collection</option>
+                  <option value="FTOD Collection">FTOD Collection</option>
+                  <option value="Pending Collection (SMA-1)">Pending Collection (SMA-1)</option>
+                  <option value="Pending Collection (SMA-2)">Pending Collection (SMA-2)</option>
+                  <option value="NPA Recovery">NPA Recovery</option>
+                  <option value="Sourcing - Login">Sourcing - Login</option>
+                  <option value="Sourcing - Disbursement">Sourcing - Disbursement</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" id="addMember">Add Member</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-list" id="teamList"></div>
+      </section>
+
+      <!-- History Tab -->
+      <section id="history" class="tab-content">
+        <div class="section-header">
+          <h2>Entry History</h2>
+          <span class="badge badge-amber">Records</span>
+        </div>
+
+        <div class="history-filters">
+          <input type="date" id="historyFrom" />
+          <span>to</span>
+          <input type="date" id="historyTo" />
+          <button class="btn btn-primary" id="filterHistory">Filter</button>
+          <button class="btn btn-outline" id="exportCsv">Export CSV</button>
+        </div>
+
+        <div class="history-table-wrap">
+          <table class="history-table" id="historyTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>FTD Demand</th>
+                <th>FTD Coll.</th>
+                <th>FTOD</th>
+                <th>PNPA (SMA-1)</th>
+                <th>Pre-PNPA (SMA-2)</th>
+                <th>NPA</th>
+                <th>Branches</th>
+                <th>Staff</th>
+                <th>Login Plan</th>
+                <th>DB Plan</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+          <p class="empty-state" id="emptyHistory">No entries yet. Start by adding data in Collection or Sourcing tabs.</p>
+        </div>
+      </section>
+
+      <!-- Admin Dashboard Tab -->
+      <section id="admin" class="tab-content">
+        <div class="section-header">
+          <h2>Admin Dashboard</h2>
+          <span class="badge badge-purple">Analytics</span>
+        </div>
+
+        <!-- Dashboard Filters -->
+        <div class="dash-filters">
+          <div class="dash-filter-group">
+            <label>Date Range</label>
+            <div class="dash-filter-row">
+              <input type="date" id="dashFrom" />
+              <span>to</span>
+              <input type="date" id="dashTo" />
+            </div>
+          </div>
+          <div class="dash-filter-group">
+            <label>Category</label>
+            <select id="dashCategory">
+              <option value="all">All Data</option>
+              <option value="collection">Collection Only</option>
+              <option value="sourcing">Sourcing Only</option>
+              <option value="pending">Pending (SMA-1 & SMA-2)</option>
+              <option value="npa">NPA Only</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="applyDashFilter" onclick="renderDashboard()">Apply Filters</button>
+          <button class="btn btn-outline" onclick="resetDashFilters()">Reset</button>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="kpi-grid" id="kpiGrid"></div>
+
+        <!-- Charts Row -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Collection Trend</h3>
+            <canvas id="chartCollection"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Pending & NPA Breakdown</h3>
+            <canvas id="chartPending"></canvas>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Sourcing Overview</h3>
+            <canvas id="chartSourcing"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Collection Efficiency (%)</h3>
+            <canvas id="chartEfficiency"></canvas>
+          </div>
+        </div>
+
+        <!-- Detailed Data Table -->
+        <div class="dash-table-section">
+          <h3>Detailed Data</h3>
+          <div class="history-table-wrap">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>FTD Demand</th>
+                  <th>FTD Coll.</th>
+                  <th>FTOD</th>
+                  <th>PNPA</th>
+                  <th>Pre-PNPA</th>
+                  <th>NPA</th>
+                  <th>Branches</th>
+                  <th>Staff</th>
+                  <th>Login</th>
+                  <th>DB Plan</th>
+                </tr>
+              </thead>
+              <tbody id="dashTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+        <h3>Confirm Delete</h3>
+        <p>Are you sure you want to delete this entry? This action cannot be undone.</p>
+        <div class="modal-actions">
+          <button class="btn btn-outline" id="cancelDelete">Cancel</button>
+          <button class="btn btn-danger" id="confirmDelete">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>&copy; 2026 IL Daily Tracker. All data stored locally in your browser.</p>
+    </footer>
+  </div>
 
   <script src="app.js"></script>
 </body>
